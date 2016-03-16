@@ -34,6 +34,8 @@ def message(bot, update):
 
     user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
 
+    logging.info(str(user_time))
+
     if time.time() - user_time > 3600 * 24:
         LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id] = time.time()
         response(bot, update, 'рад тебя снова видеть. Жму руку!')

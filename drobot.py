@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 DELAY_DICT = {}
-LAST_USER_MESSAGE = defaultdict(defaultdict(int))
+LAST_USER_MESSAGE = defaultdict(lambda: defaultdict(int))
 
 
 def start(bot, update):

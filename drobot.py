@@ -1,7 +1,7 @@
 import logging
 from telegram import Updater
 from config import TOKEN
-from random import randint
+from random import randint, uniform
 from collections import defaultdict
 import time
 
@@ -27,6 +27,7 @@ RANDOM_RESPONSE = {
     'два кальмара этому господину!':5,
 }
 
+
 def get_one_by_weight(data):
     """
     Возвращает одно из значений с учетом веса.
@@ -35,13 +36,14 @@ def get_one_by_weight(data):
     значение - вес ключа.
     """
     total = sum(data.values())
-    n = random.uniform(0, total)
+    n = uniform(0, total)
     for key in sorted(data.keys()):
         item = key
         if n < data[key]:
             break
         n -= data[key]
     return item
+
 
 def start(bot, update):
     msg = get_one_by_weight(RANDOM_MESSAGE)

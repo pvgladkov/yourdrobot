@@ -24,7 +24,7 @@ def help(bot, update):
 def message(bot, update):
 
     if update.message.chat_id not in DELAY_DICT:
-        DELAY_DICT[update.message.chat_id] = randint(0, 10)
+        DELAY_DICT[update.message.chat_id] = randint(0, 4)
     else:
         DELAY_DICT[update.message.chat_id] -= 1
 

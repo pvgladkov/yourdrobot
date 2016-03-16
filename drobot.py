@@ -35,6 +35,12 @@ def message(bot, update):
         bot.sendMessage(update.message.chat_id, text=text)
 
 
+def inline(bot, update):
+    author = update.message.from_user.first_name
+    text = ', '.join([author, 'а может по пивку?'])
+    bot.sendMessage(update.message.chat_id, text=text)
+
+
 def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
@@ -49,6 +55,7 @@ if __name__ == '__main__':
     dp.addTelegramCommandHandler("help", help)
 
     dp.addTelegramMessageHandler(message)
+    dp.addTelegramInlineHandler(inline)
 
     dp.addErrorHandler(error)
     updater.start_polling()

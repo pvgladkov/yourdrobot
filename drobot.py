@@ -2,6 +2,8 @@ import logging
 from telegram import Updater
 from config import TOKEN
 from random import randint
+from collections import defaultdict
+import time
 
 logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -11,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 DELAY_DICT = {}
+LAST_USER_MESSAGE = defaultdict(defaultdict(int))
 
 
 def start(bot, update):
@@ -21,7 +24,20 @@ def help(bot, update):
     bot.sendMessage(update.message.chat_id, text='Я drobot. Жму руку.')
 
 
+def response(bot, update, msg):
+    author = update.message.from_user.first_name
+    text = ', '.join([author, msg])
+    bot.sendMessage(update.message.chat_id, text=text)
+
+
 def message(bot, update):
+
+    user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
+
+    if time.time() - user_time > 3600 * 24:
+        LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id] = time.time()
+        response(bot, update, 'рад тебя снова видеть. Жму руку!')
+        return
 
     if update.message.chat_id not in DELAY_DICT:
         DELAY_DICT[update.message.chat_id] = randint(0, 4)
@@ -30,15 +46,11 @@ def message(bot, update):
 
     if DELAY_DICT[update.message.chat_id] == 0:
         DELAY_DICT.pop(update.message.chat_id)
-        author = update.message.from_user.first_name
-        text = ', '.join([author, 'жму руку!'])
-        bot.sendMessage(update.message.chat_id, text=text)
+        response(bot, update, 'жму руку!')
 
 
 def inline(bot, update):
-    author = update.message.from_user.first_name
-    text = ', '.join([author, 'а может по пивку?'])
-    bot.sendMessage(update.message.chat_id, text=text)
+    response(bot, update, 'а может по пивку?')
 
 
 def error(bot, update, error):

@@ -15,9 +15,37 @@ logger = logging.getLogger(__name__)
 DELAY_DICT = {}
 LAST_USER_MESSAGE = defaultdict(lambda: defaultdict(int))
 
+RANDOM_MESSAGE = {
+    'Привет! Я drobot. Жму руку.': 100,
+    'Я drobot. Жму руку.': 50,
+}
+RANDOM_RESPONSE = {
+    'рад тебя снова видеть. Жму руку!': 50,
+    'жму руку!': 50,
+    'Жму Анус!': 10,
+    'Жму кальмара!':10,
+    'два кальмара этому господину!':5,
+}
+
+def get_one_by_weight(data):
+    """
+    Возвращает одно из значений с учетом веса.
+    где data имеет вид: {"1":20,"2":10}
+    ключ - возвращаемое значение,
+    значение - вес ключа.
+    """
+    total = sum(data.values())
+    n = random.uniform(0, total)
+    for key in sorted(data.keys()):
+        item = key
+        if n < data[key]:
+            break
+        n -= data[key]
+    return item
 
 def start(bot, update):
-    bot.sendMessage(update.message.chat_id, text='Привет! Я drobot. Жму руку.')
+    msg = get_one_by_weight(RANDOM_MESSAGE)
+    bot.sendMessage(update.message.chat_id, text=msg)
 
 
 def help(bot, update):
@@ -48,7 +76,8 @@ def message(bot, update):
 
     if DELAY_DICT[update.message.chat_id] == 0:
         DELAY_DICT.pop(update.message.chat_id)
-        response(bot, update, 'жму руку!')
+        msg = get_one_by_weight(RANDOM_RESPONSE)
+        response(bot, update, msg)
 
 
 def inline(bot, update):

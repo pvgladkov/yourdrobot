@@ -1,0 +1,5 @@
+future==0.15.2
+itsdangerous==0.24
+MarkupSafe==0.23
+python-telegram-bot==3.3
+Werkzeug==0.11.4

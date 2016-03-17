@@ -9,7 +9,7 @@ import os
 
 logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.INFO)
+        level=logging.WARN)
 
 logger = logging.getLogger(__name__)
 

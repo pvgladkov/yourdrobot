@@ -75,7 +75,7 @@ def extend(bot, update, args):
     Extend answers from chat
     """
     if len(args) > 1:
-        random_responses.update({args[0]: int(args[1])})
+        random_responses.update({' '.join(args[:-1]): int(args[-1])})
         _save_messages()
         response(bot, update, 'Принял!')
 

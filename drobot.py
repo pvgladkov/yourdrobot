@@ -42,6 +42,10 @@ def get_one_by_weight(data):
     return item
 
 
+def format_message(msg, **kwargs):
+    return msg.format(**kwargs)
+
+
 def start(bot, update):
     msg = get_one_by_weight(RANDOM_MESSAGE)
     bot.sendMessage(update.message.chat_id, text=msg)
@@ -104,6 +108,8 @@ def message(bot, update):
     if DELAY_DICT[update.message.chat_id] == 0:
         DELAY_DICT.pop(update.message.chat_id)
         msg = get_one_by_weight(RANDOM_RESPONSE)
+        author = update.message.from_user.first_name
+        msg = format_message(msg, username=author)
         response(bot, update, msg)
 
 

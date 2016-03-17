@@ -1,7 +1,7 @@
 import logging
 from telegram import Updater
 from config import TOKEN
-from random import randint, uniform
+from random import randint, uniform, choice
 from collections import defaultdict
 import time
 import json
@@ -23,6 +23,8 @@ RANDOM_MESSAGE = {
 }
 
 RANDOM_RESPONSE = dict()
+
+ru_list = open('zdf.txt').readlines()
 
 
 def get_one_by_weight(data):
@@ -59,6 +61,22 @@ def response(bot, update, msg):
     author = update.message.from_user.first_name
     text = ', '.join([author, msg])
     bot.sendMessage(update.message.chat_id, text=text)
+
+
+def show_me_your_genitals(bot, update):
+    msg = json.dumps(RANDOM_MESSAGE, indent=4, separators=(',', ': '))
+    bot.sendMessage(update.message.chat_id, text=msg)
+
+
+def extend(bot, update, msg):
+    """
+    Extend answers from chat
+    """
+    msg = json.loads(msg)
+    RANDOM_MESSAGE.update(msg)
+    with open('responses.json', 'w')as f:
+        msg = json.dumps(RANDOM_MESSAGE, indent=4, separators=(',', ': '))
+        f.write(msg)
 
 
 def _reload():
@@ -107,9 +125,13 @@ def message(bot, update):
 
     if DELAY_DICT[update.message.chat_id] == 0:
         DELAY_DICT.pop(update.message.chat_id)
-        msg = get_one_by_weight(RANDOM_RESPONSE)
-        author = update.message.from_user.first_name
-        msg = format_message(msg, username=author)
+        if randint(0, 5):
+            msg = get_one_by_weight(RANDOM_RESPONSE)
+            author = update.message.from_user.first_name
+            msg = format_message(msg, username=author)
+        else:
+            # RANDOM SHAKE!
+            msg = "Жму {}!".format(choice(ru_list))
         response(bot, update, msg)
 
 
@@ -146,6 +168,8 @@ if __name__ == '__main__':
     dp.addTelegramCommandHandler("help", help)
     dp.addTelegramCommandHandler("reload", reload_messages)
     dp.addTelegramCommandHandler("set_beer_alarm", set_beer_alarm)
+    dp.addTelegramCommandHandler("extend", extend)
+    dp.addTelegramCommandHandler("show_me_your_genitals", show_me_your_genitals)
 
     dp.addTelegramMessageHandler(message)
     dp.addTelegramInlineHandler(inline)

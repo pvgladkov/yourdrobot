@@ -94,14 +94,14 @@ def reload_messages(bot, update):
 
 
 def reap_something(bot, update):
-    subject = None
+    subjects = None
     try:
-        subject, _, _ = update.message.text.split(' ')
+        subjects = update.message.text.split(' ')[:-2]
     except ValueError:
         pass
 
-    if subject is not None:
-        txt = ' '.join(['{username}, ', 'жму', subject, '!'])
+    if subjects is not None:
+        txt = ' '.join(['{username}, ', 'жму', ' '.join(subjects), '!'])
         random_responses[txt] = 10
         _save_messages()
         response(bot, update, txt)

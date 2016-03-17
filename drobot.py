@@ -133,7 +133,7 @@ def message(bot, update):
             msg = get_one_by_weight(random_responses)
         else:
             # RANDOM SHAKE!
-            msg = ''.join(["Жму {}".format(choice(ru_list)), ', {username}!'])
+            msg = ''.join(["Жму {}".format(choice(ru_list).strip()), ', {username}!'])
         response(bot, update, msg)
 
 

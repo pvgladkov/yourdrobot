@@ -18,8 +18,8 @@ LAST_USER_MESSAGE = defaultdict(lambda: defaultdict(int))
 LAST_CHAT_MESSAGE = defaultdict(int)
 
 RANDOM_MESSAGE = {
-    'Привет! Я drobot. Жму руку.': 100,
-    'Я drobot. Жму руку.': 50,
+    '{username}, Привет! Я drobot. Жму руку.': 100,
+    '{username}, Я drobot. Жму руку.': 50,
 }
 
 RANDOM_RESPONSE = dict()
@@ -59,7 +59,8 @@ def help(bot, update):
 
 def response(bot, update, msg):
     author = update.message.from_user.first_name
-    text = ', '.join([author, msg])
+    # text = ', '.join([author, msg])
+    text = format_message(msg, username=author)
     bot.sendMessage(update.message.chat_id, text=text)
 
 
@@ -96,7 +97,7 @@ def reap_something(bot, update):
         pass
 
     if subject is not None:
-        txt = ' '.join(['жму', subject, '!'])
+        txt = ' '.join(['{username}, ', 'жму', subject, '!'])
         RANDOM_RESPONSE[txt] = 10
         with open('responses.json') as f:
             json.dump(RANDOM_RESPONSE, f)
@@ -115,7 +116,7 @@ def message(bot, update):
 
     if time.time() - user_time > 3600 * 24:
         LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id] = time.time()
-        response(bot, update, 'рад тебя снова видеть. Жму руку!')
+        response(bot, update, '{username}, рад тебя снова видеть. Жму руку!')
         return
 
     if update.message.chat_id not in DELAY_DICT:
@@ -127,11 +128,9 @@ def message(bot, update):
         DELAY_DICT.pop(update.message.chat_id)
         if randint(0, 5):
             msg = get_one_by_weight(RANDOM_RESPONSE)
-            author = update.message.from_user.first_name
-            msg = format_message(msg, username=author)
         else:
             # RANDOM SHAKE!
-            msg = "Жму {}!".format(choice(ru_list))
+            msg = ''.join(["Жму {}".format(choice(ru_list)), ', {username}!'])
         response(bot, update, msg)
 
 

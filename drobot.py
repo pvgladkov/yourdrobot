@@ -5,6 +5,7 @@ from random import randint, uniform, choice
 from collections import defaultdict
 import time
 import json
+import os
 
 logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -79,7 +80,7 @@ def extend(bot, update, msg):
 
 
 def _save_messages():
-    with open('responses.json', 'w')as f:
+    with open('new_responses.json', 'w')as f:
         msg = json.dumps(random_responses, indent=4, separators=(',', ': '))
         f.write(msg)
 
@@ -87,6 +88,10 @@ def _save_messages():
 def _reload():
     with open('responses.json') as f:
         random_responses.update(json.load(f))
+
+    if os.path.exists('new_responses.json'):
+        with open('new_responses.json') as f:
+            random_responses.update(json.load(f))
 
 
 def reload_messages(bot, update):

@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 DELAY_DICT = {}
 LAST_USER_MESSAGE = defaultdict(lambda: defaultdict(int))
+LAST_CHAT_MESSAGE = defaultdict(int)
 
 RANDOM_MESSAGE = {
     'Привет! Я drobot. Жму руку.': 100,
@@ -82,6 +83,8 @@ def reap_something(bot, update):
 
 def message(bot, update):
 
+    LAST_CHAT_MESSAGE[update.message.chat_id] = time.time()
+
     if update.message.text.endswith('себе пожми'):
         reap_something(bot, update)
         return
@@ -112,6 +115,19 @@ def error(bot, update, error):
     logger.warn('Update "%s" caused error "%s"' % (update, error))
 
 
+def set_beer_alarm(bot, update):
+
+    chat_id = update.message.chat_id
+
+    def beer_alarm(_bot):
+        if LAST_CHAT_MESSAGE[chat_id] < 0:
+            LAST_CHAT_MESSAGE[chat_id] = 3600 * 24 * 5
+            _bot.sendMessage(chat_id, text='А может по пиву сегодня?')
+
+        LAST_CHAT_MESSAGE[chat_id] -= 5
+
+    updater.job_queue.put(beer_alarm, 5, repeat=True)
+
 if __name__ == '__main__':
 
     _reload()
@@ -123,6 +139,7 @@ if __name__ == '__main__':
     dp.addTelegramCommandHandler("start", start)
     dp.addTelegramCommandHandler("help", help)
     dp.addTelegramCommandHandler("reload", reload_messages)
+    dp.addTelegramCommandHandler("set_beer_alarm", set_beer_alarm)
 
     dp.addTelegramMessageHandler(message)
     dp.addTelegramInlineHandler(inline)

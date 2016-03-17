@@ -4,6 +4,7 @@ from config import TOKEN
 from random import randint, uniform
 from collections import defaultdict
 import time
+import json
 
 logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -19,13 +20,8 @@ RANDOM_MESSAGE = {
     'Привет! Я drobot. Жму руку.': 100,
     'Я drobot. Жму руку.': 50,
 }
-RANDOM_RESPONSE = {
-    'рад тебя снова видеть. Жму руку!': 50,
-    'жму руку!': 50,
-    'Жму Анус!': 10,
-    'Жму кальмара!':10,
-    'два кальмара этому господину!':5,
-}
+
+RANDOM_RESPONSE = dict()
 
 
 def get_one_by_weight(data):
@@ -60,6 +56,24 @@ def response(bot, update, msg):
     bot.sendMessage(update.message.chat_id, text=text)
 
 
+def _reload():
+    with open('responses.json') as f:
+        RANDOM_MESSAGE.update(json.loads(f.readall()))
+
+
+def reload_messages(bot, update):
+    _reload()
+
+
+def reap_something(bot, update):
+    subject, _, _ = update.message.text.split(' ')
+    txt = ' '.join(['жму', subject, '!'])
+    RANDOM_RESPONSE[txt] = 10
+    with open('responses.json') as f:
+        json.dump(RANDOM_RESPONSE, f)
+    response(bot, update, txt)
+
+
 def message(bot, update):
 
     user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
@@ -92,12 +106,15 @@ def error(bot, update, error):
 
 if __name__ == '__main__':
 
+    _reload()
+
     updater = Updater(TOKEN)
 
     dp = updater.dispatcher
 
     dp.addTelegramCommandHandler("start", start)
     dp.addTelegramCommandHandler("help", help)
+    dp.addTelegramCommandHandler("reload", reload_messages)
 
     dp.addTelegramMessageHandler(message)
     dp.addTelegramInlineHandler(inline)

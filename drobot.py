@@ -66,19 +66,27 @@ def reload_messages(bot, update):
 
 
 def reap_something(bot, update):
-    subject, _, _ = update.message.text.split(' ')
-    txt = ' '.join(['жму', subject, '!'])
-    RANDOM_RESPONSE[txt] = 10
-    with open('responses.json') as f:
-        json.dump(RANDOM_RESPONSE, f)
-    response(bot, update, txt)
+    subject = None
+    try:
+        subject, _, _ = update.message.text.split(' ')
+    except ValueError:
+        pass
+
+    if subject is not None:
+        txt = ' '.join(['жму', subject, '!'])
+        RANDOM_RESPONSE[txt] = 10
+        with open('responses.json') as f:
+            json.dump(RANDOM_RESPONSE, f)
+        response(bot, update, txt)
 
 
 def message(bot, update):
 
-    user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
+    if update.message.text.endswith('себе пожми'):
+        reap_something(bot, update)
+        return
 
-    logging.info(str(user_time))
+    user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
 
     if time.time() - user_time > 3600 * 24:
         LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id] = time.time()

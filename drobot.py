@@ -75,6 +75,10 @@ def extend(bot, update, msg):
     """
     msg = json.loads(msg)
     RANDOM_MESSAGE.update(msg)
+    _save_messages()
+
+
+def _save_messages():
     with open('responses.json', 'w')as f:
         msg = json.dumps(RANDOM_MESSAGE, indent=4, separators=(',', ': '))
         f.write(msg)
@@ -99,8 +103,7 @@ def reap_something(bot, update):
     if subject is not None:
         txt = ' '.join(['{username}, ', 'жму', subject, '!'])
         RANDOM_RESPONSE[txt] = 10
-        with open('responses.json') as f:
-            json.dump(RANDOM_RESPONSE, f)
+        _save_messages()
         response(bot, update, txt)
 
 

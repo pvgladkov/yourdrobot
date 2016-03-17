@@ -13,16 +13,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-DELAY_DICT = {}
-LAST_USER_MESSAGE = defaultdict(lambda: defaultdict(int))
-LAST_CHAT_MESSAGE = defaultdict(int)
+delay_dict = {}
+last_user_message = defaultdict(lambda: defaultdict(int))
+last_chat_message = defaultdict(int)
 
-RANDOM_MESSAGE = {
+random_hello_messages = {
     '{username}, Привет! Я drobot. Жму руку.': 100,
     '{username}, Я drobot. Жму руку.': 50,
 }
 
-RANDOM_RESPONSE = dict()
+random_responses = dict()
 
 ru_list = open('zdf.txt').readlines()
 
@@ -49,7 +49,7 @@ def format_message(msg, **kwargs):
 
 
 def start(bot, update):
-    msg = get_one_by_weight(RANDOM_MESSAGE)
+    msg = get_one_by_weight(random_hello_messages)
     bot.sendMessage(update.message.chat_id, text=msg)
 
 
@@ -65,7 +65,7 @@ def response(bot, update, msg):
 
 
 def show_me_your_genitals(bot, update):
-    msg = json.dumps(RANDOM_MESSAGE, indent=4, separators=(',', ': '))
+    msg = json.dumps(random_responses, indent=4, separators=(',', ': '))
     bot.sendMessage(update.message.chat_id, text=msg)
 
 
@@ -74,19 +74,19 @@ def extend(bot, update, msg):
     Extend answers from chat
     """
     msg = json.loads(msg)
-    RANDOM_MESSAGE.update(msg)
+    random_responses.update(msg)
     _save_messages()
 
 
 def _save_messages():
     with open('responses.json', 'w')as f:
-        msg = json.dumps(RANDOM_MESSAGE, indent=4, separators=(',', ': '))
+        msg = json.dumps(random_responses, indent=4, separators=(',', ': '))
         f.write(msg)
 
 
 def _reload():
     with open('responses.json') as f:
-        RANDOM_MESSAGE.update(json.loads(f.readall()))
+        random_responses.update(json.loads(f.readlines()))
 
 
 def reload_messages(bot, update):
@@ -102,35 +102,35 @@ def reap_something(bot, update):
 
     if subject is not None:
         txt = ' '.join(['{username}, ', 'жму', subject, '!'])
-        RANDOM_RESPONSE[txt] = 10
+        random_responses[txt] = 10
         _save_messages()
         response(bot, update, txt)
 
 
 def message(bot, update):
 
-    LAST_CHAT_MESSAGE[update.message.chat_id] = time.time()
+    last_chat_message[update.message.chat_id] = time.time()
 
     if update.message.text.endswith('себе пожми'):
         reap_something(bot, update)
         return
 
-    user_time = LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id]
+    user_time = last_user_message[update.message.chat_id][update.message.from_user.id]
 
     if time.time() - user_time > 3600 * 24:
-        LAST_USER_MESSAGE[update.message.chat_id][update.message.from_user.id] = time.time()
+        last_user_message[update.message.chat_id][update.message.from_user.id] = time.time()
         response(bot, update, '{username}, рад тебя снова видеть. Жму руку!')
         return
 
-    if update.message.chat_id not in DELAY_DICT:
-        DELAY_DICT[update.message.chat_id] = randint(0, 4)
+    if update.message.chat_id not in delay_dict:
+        delay_dict[update.message.chat_id] = randint(0, 4)
     else:
-        DELAY_DICT[update.message.chat_id] -= 1
+        delay_dict[update.message.chat_id] -= 1
 
-    if DELAY_DICT[update.message.chat_id] == 0:
-        DELAY_DICT.pop(update.message.chat_id)
+    if delay_dict[update.message.chat_id] == 0:
+        delay_dict.pop(update.message.chat_id)
         if randint(0, 5):
-            msg = get_one_by_weight(RANDOM_RESPONSE)
+            msg = get_one_by_weight(random_responses)
         else:
             # RANDOM SHAKE!
             msg = ''.join(["Жму {}".format(choice(ru_list)), ', {username}!'])
@@ -150,11 +150,11 @@ def set_beer_alarm(bot, update):
     chat_id = update.message.chat_id
 
     def beer_alarm(_bot):
-        if LAST_CHAT_MESSAGE[chat_id] < 0:
-            LAST_CHAT_MESSAGE[chat_id] = 3600 * 24 * 5
+        if last_chat_message[chat_id] < 0:
+            last_chat_message[chat_id] = 3600 * 24 * 5
             _bot.sendMessage(chat_id, text='А может по пиву сегодня?')
 
-        LAST_CHAT_MESSAGE[chat_id] -= 5
+        last_chat_message[chat_id] -= 5
 
     updater.job_queue.put(beer_alarm, 5, repeat=True)
 

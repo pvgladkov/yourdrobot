@@ -86,7 +86,7 @@ def _save_messages():
 
 def _reload():
     with open('responses.json') as f:
-        random_responses.update(json.loads(f.readlines()))
+        random_responses.update(json.load(f))
 
 
 def reload_messages(bot, update):

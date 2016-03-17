@@ -70,13 +70,14 @@ def show_me_your_genitals(bot, update):
     bot.sendMessage(update.message.chat_id, text=msg)
 
 
-def extend(bot, update, msg):
+def extend(bot, update, args):
     """
     Extend answers from chat
     """
-    msg = json.loads(msg)
-    random_responses.update(msg)
-    _save_messages()
+    if len(args) > 1:
+        random_responses.update({args[0]: int(args[1])})
+        _save_messages()
+        response(bot, update, 'Принял!')
 
 
 def _save_messages():

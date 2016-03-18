@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 delay_dict = {}
-last_user_message = defaultdict(lambda: defaultdict(int))
 last_chat_message = defaultdict(int)
 ru_list = open('zdf.txt').readlines()
 humiliation_messages = {
@@ -57,15 +56,21 @@ def admin(method):
 class Bot(object):
 
     def __init__(self):
+        self.last_user_message = defaultdict(lambda: defaultdict(int))
         self.prefix = self.__class__.__name__
         self.base_file = 'responses/{}_base.json'.format(self.prefix)
         self.dynamic_file = 'responses/{}_dynamic.json'.format(self.prefix)
         self.users_file = 'responses/{}_users.json'.format(self.prefix)
+        self.last_msgs_file = 'responses/{}_last_msgs.json'.format(self.prefix)
         self.names = defaultdict()
 
         if os.path.exists(self.users_file):
             with open(self.users_file) as f:
                 self.names.update(json.load(f))
+
+        if os.path.exists(self.last_msgs_file):
+            with open(self.last_msgs_file) as f:
+                self.last_user_message = json.load(f)
 
     def _save_json(self, name, obj):
         with open(name, 'w')as f:
@@ -111,6 +116,9 @@ class Bot(object):
     def _save_names(self):
         self._save_json(self.users_file, self.names)
 
+    def _save_user_messeages(self):
+        self._save_json(self.last_user_message)
+
 
 class Drobot(Bot):
 
@@ -145,11 +153,12 @@ class Drobot(Bot):
             self.reap_something(bot, update)
             return
 
-        user_time = last_user_message[update.message.chat_id][update.message.from_user.id]
+        user_time = self.last_user_message[update.message.chat_id][update.message.from_user.id]
 
         if time.time() - user_time > 3600 * 24:
-            last_user_message[update.message.chat_id][update.message.from_user.id] = time.time()
+            self.last_user_message[update.message.chat_id][update.message.from_user.id] = time.time()
             self.response(bot, update, '{username}, рад тебя снова видеть. Жму руку!')
+            self._save_user_messeages()
             return
 
         if update.message.chat_id not in delay_dict:

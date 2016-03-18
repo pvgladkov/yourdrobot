@@ -177,7 +177,7 @@ if __name__ == '__main__':
     dp = updater.dispatcher
 
     dp.addTelegramCommandHandler("start", bot_app.start)
-    dp.addTelegramCommandHandler("help", help)
+    dp.addTelegramCommandHandler("help", bot_app.help)
     dp.addTelegramCommandHandler("set_beer_alarm", set_beer_alarm)
     dp.addTelegramCommandHandler("extend", bot_app.extend)
     dp.addTelegramCommandHandler("set_param", set_param)

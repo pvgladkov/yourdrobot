@@ -117,7 +117,7 @@ class Bot(object):
         self._save_json(self.users_file, self.names)
 
     def _save_user_messeages(self):
-        self._save_json(self.last_user_message)
+        self._save_json(self.last_msgs_file, self.last_user_message)
 
 
 class Drobot(Bot):

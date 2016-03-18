@@ -3,6 +3,7 @@ new_responses.json
 config.py
 responses/*_dynamic.json
 responses/*_users.json
+responses/*_last_msgs.json
 
 # gitignore by https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files

@@ -120,7 +120,7 @@ def reap_something(bot, update):
         pass
 
     if subjects is not None:
-        txt = ' '.join(['{username}, ', 'жму', ' '.join(subjects), '!'])
+        txt = ' '.join(['{username},', 'жму', ' '.join(subjects), '!'])
         random_responses[txt] = 10
         _save_messages()
         response(bot, update, txt)

@@ -198,7 +198,9 @@ class Drobot(Bot):
 
     def drobot(self, bot, update):
         phrases = {
-            'чо?': 10,
+            'Я тут, слушаю тебя': 10,
+            'Я тут, слушаю тебя, {username}': 10,
+            '{username}, слушаю тебя': 10,
         }
         msg = get_one_by_weight(phrases)
         self.response(bot, update, msg)

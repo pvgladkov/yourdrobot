@@ -132,7 +132,7 @@ class Drobot(Bot):
             pass
 
         if subjects is not None:
-            txt = ''.join(['{username}, ', 'жму ', ''.join(subjects), '!'])
+            txt = ''.join(['{username}, ', 'жму ', ' '.join(subjects)], '!')
             self.random_responses[txt] = 10
             self.save_messages()
             self.response(bot, update, txt)

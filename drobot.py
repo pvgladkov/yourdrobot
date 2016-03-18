@@ -86,8 +86,11 @@ def extend(bot, update, args):
 
 def set_param(bot, update, args):
     if len(args) > 1:
-        key, value = args[0], args[1]
-        params[key] = value
+        try:
+            key, value = args[0], int(args[1])
+            params[key] = value
+        except ValueError:
+            pass
 
 
 def _save_messages():

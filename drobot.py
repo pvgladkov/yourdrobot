@@ -21,6 +21,7 @@ ru_list = open('zdf.txt').readlines()
 humiliation_messages = {
     'Хаха, {username} лох': 1,
     'Мамку свою админь, {username}': 1,
+    'Хочешь стать админом, {username}?': 2,
 }
 
 

@@ -153,10 +153,10 @@ class Drobot(Bot):
             self.reap_something(bot, update)
             return
 
-        user_time = self.last_user_message.get(update.message.from_user.id, 0)
+        user_time = self.last_user_message.get(str(update.message.from_user.id), 0)
 
         if time.time() - user_time > 3600 * 24:
-            self.last_user_message[update.message.from_user.id] = time.time()
+            self.last_user_message[str(update.message.from_user.id)] = time.time()
             self.response(bot, update, '{username}, рад тебя снова видеть. Жму руку!')
             self._save_user_messeages()
             return

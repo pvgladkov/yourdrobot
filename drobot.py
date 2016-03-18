@@ -43,7 +43,7 @@ def get_one_by_weight(data):
 
 
 def admin(method):
-    def humiliation(self, bot, update):
+    def humiliation(self, bot, update, args):
         msg = get_one_by_weight(humiliation_messages)
         self.bot.response(bot, update, msg=msg)
 

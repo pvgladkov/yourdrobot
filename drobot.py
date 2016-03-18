@@ -18,6 +18,10 @@ delay_dict = {}
 last_user_message = defaultdict(lambda: defaultdict(int))
 last_chat_message = defaultdict(int)
 
+params = {
+    'freq': 4
+}
+
 random_hello_messages = {
     '{username}, Привет! Я drobot. Жму руку.': 100,
     '{username}, Я drobot. Жму руку.': 50,
@@ -80,6 +84,12 @@ def extend(bot, update, args):
         response(bot, update, 'Принял!')
 
 
+def set_param(bot, update, args):
+    if len(args) > 1:
+        key, value = args[0], args[1]
+        params[key] = value
+
+
 def _save_messages():
     with open('new_responses.json', 'w')as f:
         msg = json.dumps(random_responses, indent=4, separators=(',', ': '))
@@ -129,7 +139,7 @@ def message(bot, update):
         return
 
     if update.message.chat_id not in delay_dict:
-        delay_dict[update.message.chat_id] = randint(0, 4)
+        delay_dict[update.message.chat_id] = randint(0, params['freq'])
     else:
         delay_dict[update.message.chat_id] -= 1
 
@@ -177,6 +187,7 @@ if __name__ == '__main__':
     dp.addTelegramCommandHandler("reload", reload_messages)
     dp.addTelegramCommandHandler("set_beer_alarm", set_beer_alarm)
     dp.addTelegramCommandHandler("extend", extend)
+    dp.addTelegramCommandHandler("set_param", set_param)
     dp.addTelegramCommandHandler("show_me_your_genitals", show_me_your_genitals)
 
     dp.addTelegramMessageHandler(message)

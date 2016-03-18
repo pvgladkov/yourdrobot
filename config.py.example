@@ -1,0 +1,5 @@
+TOKEN = ''
+params = {
+    'freq': 4,
+    'admins': [],
+}

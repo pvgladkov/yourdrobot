@@ -8,8 +8,8 @@ import json
 import os
 
 logging.basicConfig(
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        level=logging.WARN)
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.WARN)
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,7 @@ def set_param(bot, update, args):
 
 def _save_messages():
     with open('new_responses.json', 'w')as f:
-        msg = json.dumps(random_responses, indent=4, separators=(',', ': '))
+        msg = json.dumps(random_responses, indent=4, separators=(',', ': '), ensure_ascii=False)
         f.write(msg)
 
 

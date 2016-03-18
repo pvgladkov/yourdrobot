@@ -3,6 +3,7 @@ from telegram import Updater
 from config import TOKEN, params
 from random import randint, uniform, choice
 from collections import defaultdict
+from filedict import FileDict
 import time
 import json
 import os
@@ -186,6 +187,40 @@ class Drobot(Bot):
         self.response(bot, update, msg)
         self._save_names()
 
+    def rombika(self, bot, update):
+        phrases = {
+            'Все в порядке, завтра запускаемся, {username}': 10,
+            '{username}, все в порядке, завтра запускаемся!': 10,
+            'Все в порядке, завтра запускаемся!': 10,
+        }
+        msg = get_one_by_weight(phrases)
+        self.response(bot, update, msg)
+
+    def drobot(self, bot, update):
+        phrases = {
+            'чо?': 10,
+        }
+        msg = get_one_by_weight(phrases)
+        self.response(bot, update, msg)
+
+    def router(self, bot, update):
+        msg = update.message.text
+        if msg.lower().find('дробот') > -1:
+            self.drobot(bot, update)
+            return
+        if msg.lower().find('ромбик') > -1:
+            self.rombika(bot, update)
+            return
+        if msg.startswith('@yourdrobot'):
+            msg = msg[12:]
+            if msg.startswith('зови меня'):
+                self.rename(bot, update)
+            else:
+                msg = get_one_by_weight(self.random_responses)
+                self.response(bot, update, msg)
+        else:
+            self.message(bot, update)
+
 
 class BotApplication(object):
 
@@ -201,10 +236,10 @@ class BotApplication(object):
         dp.addTelegramCommandHandler("set_param", self.set_param)
         dp.addTelegramCommandHandler("myid", self.myid)
 
-        # dp.addTelegramMessageHandler(self.message)
-        dp.addTelegramRegexHandler('[^@yourdrobot].*', self.bot.message)
-        dp.addTelegramRegexHandler('@yourdrobot зови меня .*', self.bot.rename)
-        dp.addTelegramRegexHandler('@yourdrobot.*', self.conversion)
+        dp.addTelegramMessageHandler(self.bot.router)
+        # dp.addTelegramRegexHandler('[^@yourdrobot].*', self.bot.message)
+        # dp.addTelegramRegexHandler('@yourdrobot зови меня .*', self.bot.rename)
+        # dp.addTelegramRegexHandler('@yourdrobot.*', self.conversion)
 
     @admin
     def lol_admin(self, bot, update, args):

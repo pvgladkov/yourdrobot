@@ -253,6 +253,7 @@ def set_beer_alarm(bot, update):
     updater.job_queue.put(beer_alarm, 5, repeat=True)
 
 if __name__ == '__main__':
+
     updater = Updater(TOKEN)
     dp = updater.dispatcher
     bot_app = BotApplication(dp)

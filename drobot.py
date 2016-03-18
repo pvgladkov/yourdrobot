@@ -49,7 +49,7 @@ def admin(method):
 
     def wrapper(self, bot, update, args):
         if update.message.from_user.id in params['admins']:
-            return method(self, bot, update)
+            return method(self, bot, update, args)
         return humiliation(self, bot, update, args)
     return wrapper
 

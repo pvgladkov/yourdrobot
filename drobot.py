@@ -47,10 +47,10 @@ def admin(method):
         msg = get_one_by_weight(humiliation_messages)
         self.bot.response(bot, update, msg=msg)
 
-    def wrapper(self, bot, update):
+    def wrapper(self, bot, update, args):
         if update.message.from_user.id in params['admins']:
             return method(self, bot, update)
-        return humiliation(self, bot, update)
+        return humiliation(self, bot, update, args)
     return wrapper
 
 
@@ -198,18 +198,19 @@ class BotApplication(object):
         dp.addTelegramRegexHandler('@yourdrobot.*', self.conversion)
 
     @admin
-    def lol_admin(self, bot, update):
+    def lol_admin(self, bot, update, args):
         msg = 'Инструкции отправлены в личку, {username}'
         self.bot.response(bot, update, msg)
 
     @admin
-    def start(self, bot, update):
+    def start(self, bot, update, args):
         msg = get_one_by_weight(self.bot.random_hello_messages)
         self.bot.response(bot, update, msg)
 
-    def help(self, bot, update):
+    def help(self, bot, update, args):
         bot.sendMessage(update.message.chat_id, text='Я drobot. Жму руку.')
 
+    @admin
     def extend(self, bot, update, args):
         """
         Extend answers from chat

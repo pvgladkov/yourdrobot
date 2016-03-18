@@ -1,5 +1,5 @@
 TOKEN = ''
 params = {
-    'freq': 4,
+    'freq': 8,
     'admins': [],
 }

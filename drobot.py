@@ -227,6 +227,7 @@ class Drobot(Bot):
 class BotApplication(object):
 
     bot = 'Drobot'
+    chat_id = 0
 
     def __init__(self, dp):
         self.bot = Drobot()
@@ -236,6 +237,8 @@ class BotApplication(object):
         dp.addTelegramCommandHandler("help", self.help)
         dp.addTelegramCommandHandler("extend", self.extend)
         dp.addTelegramCommandHandler("set_param", self.set_param)
+        dp.addTelegramCommandHandler("set_active_chat_id", self.set_active_chat_id)
+        dp.addTelegramCommandHandler("say", self.say)
         dp.addTelegramCommandHandler("myid", self.myid)
 
         dp.addTelegramMessageHandler(self.bot.router)
@@ -251,6 +254,7 @@ class BotApplication(object):
     @admin
     def start(self, bot, update, args):
         msg = get_one_by_weight(self.bot.random_hello_messages)
+        msg = "{} chat_id: {}".format(msg, update.message.chat_id)
         self.bot.response(bot, update, msg)
 
     def help(self, bot, update, args):
@@ -265,6 +269,22 @@ class BotApplication(object):
             self.bot.random_responses.update({' '.join(args[:-1]): int(args[-1])})
             self.bot.save_messages()
             self.bot.response(bot, update, 'Принял!')
+
+    @admin
+    def set_active_chat_id(self, bot, update, args):
+        msg = "Неверный формат"
+        try:
+            self.chat_id = int(update.message.text)
+            msg = "Чат обновлен"
+        except:
+            pass
+        self.bot.sendMessage(self.chat_id, text=msg)
+
+    @admin
+    def say(self, bot, update, args):
+        msg = update.message.text
+        if self.chat_id:
+            self.bot.sendMessage(self.chat_id, text=msg)
 
     def set_param(self, bot, update, args):
         if len(args) > 1:

@@ -274,7 +274,7 @@ class BotApplication(object):
     def set_active_chat_id(self, bot, update, args):
         msg = "Неверный формат"
         try:
-            self.chat_id = int(update.message.text)
+            self.chat_id = int(update.message.chat_id)
             msg = "Чат обновлен"
         except:
             pass
@@ -284,7 +284,7 @@ class BotApplication(object):
     def say(self, bot, update, args):
         msg = update.message.text
         if self.chat_id:
-            bot.sendMessage(self.chat_id, text=msg)
+            bot.sendMessage(self.chat_id, text=msg[4:])
 
     def set_param(self, bot, update, args):
         if len(args) > 1:

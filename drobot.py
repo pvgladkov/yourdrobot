@@ -278,13 +278,13 @@ class BotApplication(object):
             msg = "Чат обновлен"
         except:
             pass
-        self.bot.sendMessage(self.chat_id, text=msg)
+        bot.sendMessage(self.chat_id, text=msg)
 
     @admin
     def say(self, bot, update, args):
         msg = update.message.text
         if self.chat_id:
-            self.bot.sendMessage(self.chat_id, text=msg)
+            bot.sendMessage(self.chat_id, text=msg)
 
     def set_param(self, bot, update, args):
         if len(args) > 1:
